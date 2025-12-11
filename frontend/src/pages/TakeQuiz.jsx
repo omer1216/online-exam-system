@@ -33,45 +33,56 @@ const TakeQuiz = ({ quizId, onBack }) => {
   if (!quiz) return <p>Loading Quiz...</p>;
 
   // --- VIEW: SHOW RESULT (UPDATED WITH ROUNDING) ---
+  // --- VIEW: SHOW RESULT (UPDATED WITH ROUNDING) ---
   if (result) {
     return (
-      <div style={{ padding: '20px', textAlign: 'center' }}>
-        <h2>🎉 Quiz Completed!</h2>
-        <h1>Your Score: {result.score} / {result.total}</h1>
-        {/* ROUND OFF TO 2 DECIMALS */}
-        <h3>({Number(result.percentage).toFixed(2)}%)</h3>
-        
-        <button onClick={onBack} style={{ padding: '10px 20px', background: 'gray', color: 'white', border: 'none', cursor:'pointer' }}>
-          Back to Dashboard
-        </button>
+      <div className="auth-container">
+        <div className="card text-center">
+          <h2>🎉 Quiz Completed!</h2>
+          <h1>Your Score: {result.score} / {result.total}</h1>
+          <h3>({Number(result.percentage).toFixed(2)}%)</h3>
+
+          <button onClick={onBack} style={{ backgroundColor: 'var(--secondary-color)', marginTop: '1rem' }}>
+            Back to Dashboard
+          </button>
+        </div>
       </div>
     );
   }
 
   // --- VIEW: SHOW QUESTIONS (Same as before) ---
   return (
-    <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto' }}>
-      <button onClick={onBack} style={{ marginBottom: '10px' }}>Cancel</button>
-      <h2>📝 {quiz.title}</h2>
-      
-      {quiz.questions.map((q, index) => (
-        <div key={q.id} style={{ marginBottom: '20px', border: '1px solid #ddd', padding: '15px', borderRadius: '8px' }}>
-          <h4>{index + 1}. {q.question_text}</h4>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-            {['option_a', 'option_b', 'option_c', 'option_d'].map((optKey) => {
-               const letter = optKey.split('_')[1].toUpperCase();
-               const isSelected = answers[q.id] === letter;
-               return (
-                 <label key={optKey} style={{ background: isSelected ? '#d1e7dd' : 'transparent', padding: '5px', borderRadius: '4px', cursor:'pointer' }}>
-                   <input type="radio" name={`question-${q.id}`} value={letter} onChange={() => handleOptionSelect(q.id, letter)}/>
-                   <b> {letter})</b> {q[optKey]}
-                 </label>
-               );
-            })}
+    <div className="dashboard-layout">
+      <button onClick={onBack} className="secondary mb-4">Cancel</button>
+      <div className="card">
+        <h2>📝 {quiz.title}</h2>
+
+        {quiz.questions.map((q, index) => (
+          <div key={q.id} style={{ marginBottom: '20px', padding: '15px', borderBottom: '1px solid #e5e7eb' }}>
+            <h4>{index + 1}. {q.question_text}</h4>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              {['option_a', 'option_b', 'option_c', 'option_d'].map((optKey) => {
+                const letter = optKey.split('_')[1].toUpperCase();
+                const isSelected = answers[q.id] === letter;
+                return (
+                  <label key={optKey} style={{
+                    background: isSelected ? '#e0e7ff' : '#f9fafb',
+                    padding: '10px',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    border: isSelected ? '1px solid var(--primary-color)' : '1px solid transparent',
+                    display: 'block'
+                  }}>
+                    <input type="radio" name={`question-${q.id}`} value={letter} onChange={() => handleOptionSelect(q.id, letter)} style={{ marginRight: '10px', verticalAlign: 'middle', width: 'auto' }} />
+                    <b> {letter})</b> {q[optKey]}
+                  </label>
+                );
+              })}
+            </div>
           </div>
-        </div>
-      ))}
-      <button onClick={handleSubmit} style={{ width: '100%', padding: '15px', background: 'green', color: 'white', fontSize: '18px', border: 'none', cursor: 'pointer' }}>Submit Quiz</button>
+        ))}
+        <button onClick={handleSubmit} style={{ backgroundColor: 'var(--success-color)', fontSize: '1.2rem' }}>Submit Quiz</button>
+      </div>
     </div>
   );
 };

@@ -17,45 +17,45 @@ const Login = ({ onLogin }) => {
 
     try {
       const response = await api.post('/token', formData);
-      
+
       // SAVE CRITICAL DATA
       localStorage.setItem('token', response.data.access_token);
       localStorage.setItem('role', response.data.role);       // Save "teacher" or "student"
       localStorage.setItem('user_id', response.data.user_id); // Save ID (e.g., 1)
-      
-      onLogin(); 
+
+      onLogin();
     } catch (err) {
-// ... rest of the code is same
+      // ... rest of the code is same
       console.error(err);
       setError('Invalid username or password!');
     }
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: '50px auto', textAlign: 'center' }}>
-      <h2>Exam System Login</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-        <input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          required
-          style={{ padding: '10px' }}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          style={{ padding: '10px' }}
-        />
-        <button type="submit" style={{ padding: '10px', background: 'blue', color: 'white', border: 'none' }}>
-          Login
-        </button>
-      </form>
+    <div className="auth-container">
+      <div className="card auth-card">
+        <h2>Exam System Login</h2>
+        {error && <p className="error-msg">{error}</p>}
+        <form onSubmit={handleSubmit} className="form-group">
+          <input
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <button type="submit">
+            Login
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

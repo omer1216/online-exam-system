@@ -24,43 +24,48 @@ const Register = ({ onSwitchToLogin }) => {
         role: role
       });
       alert(`Registration Successful! Welcome, ${cleanUsername}. Please Login.`);
-      onSwitchToLogin(); 
+      onSwitchToLogin();
     } catch (error) {
-      setMsg('Username already exists or Error occurred');
+      console.error("Registration Error:", error);
+      if (error.response && error.response.data && error.response.data.detail) {
+        setMsg(error.response.data.detail);
+      } else {
+        setMsg('Username already exists or Error occurred');
+      }
     }
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: '50px auto', textAlign: 'center' }}>
-      <h2>Create an Account</h2>
-      {msg && <p style={{ color: 'red' }}>{msg}</p>}
-      <form onSubmit={handleRegister} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-        <input 
-            placeholder="Username (e.g. Omer)" 
-            value={username} 
-            onChange={(e) => setUsername(e.target.value)} 
-            required 
-            style={{ padding: '10px' }} 
-        />
-        <input 
-            type="password" 
-            placeholder="Password" 
-            value={password} 
-            onChange={(e) => setPassword(e.target.value)} 
-            required 
-            style={{ padding: '10px' }} 
-        />
-        
-        <select value={role} onChange={(e) => setRole(e.target.value)} style={{ padding: '10px' }}>
-          <option value="student">Student</option>
-          <option value="teacher">Teacher</option>
-        </select>
+    <div className="auth-container">
+      <div className="card auth-card">
+        <h2>Create an Account</h2>
+        {msg && <p className="error-msg">{msg}</p>}
+        <form onSubmit={handleRegister} className="form-group">
+          <input
+            placeholder="Username (e.g. Omer)"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
 
-        <button type="submit" style={{ padding: '10px', background: 'blue', color: 'white', border: 'none' }}>Register</button>
-      </form>
-      <p>
-        Already have an account? <button onClick={onSwitchToLogin} style={{background:'none', border:'none', color:'blue', textDecoration:'underline', cursor:'pointer'}}>Login here</button>
-      </p>
+          <select value={role} onChange={(e) => setRole(e.target.value)}>
+            <option value="student">Student</option>
+            <option value="teacher">Teacher</option>
+          </select>
+
+          <button type="submit">Register</button>
+        </form>
+        <p style={{ marginTop: '1rem', textAlign: 'center' }}>
+          Already have an account? <button onClick={onSwitchToLogin} className="secondary">Login here</button>
+        </p>
+      </div>
     </div>
   );
 };

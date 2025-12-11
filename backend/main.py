@@ -12,6 +12,11 @@ models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
+@app.get("/")
+def read_root():
+    return {"message": "Welcome to the Online Exam System API! Visit /docs for the API documentation."}
+
+
 # Allow Frontend to talk to Backend (CORS)
 app.add_middleware(
     CORSMiddleware,
@@ -40,7 +45,7 @@ def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
 @app.post("/token")
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     user = crud.get_user_by_username(db, form_data.username)
-    if not user or not crud.pwd_context.verify(form_data.password, user.password):
+    if not user or not crud.verify_password(form_data.password, user.password):
         raise HTTPException(status_code=400, detail="Incorrect username or password")
     return {"access_token": user.username, "token_type": "bearer", "role": user.role, "user_id": user.id}
 
@@ -70,6 +75,15 @@ def submit_quiz(quiz_id: int, answers: dict, user_id: int, db: Session = Depends
     quiz = crud.get_quiz(db, quiz_id=quiz_id)
     if not quiz:
         raise HTTPException(status_code=404, detail="Quiz not found")
+    
+    # Check for existing submission
+    existing_result = db.query(models.QuizResult).filter(
+        models.QuizResult.quiz_id == quiz_id,
+        models.QuizResult.student_id == user_id
+    ).first()
+    
+    if existing_result:
+        raise HTTPException(status_code=400, detail="You have already taken this quiz.")
     
     score = 0
     total = len(quiz.questions)
@@ -103,6 +117,13 @@ def get_quiz_results(quiz_id: int, db: Session = Depends(get_db)):
         }
         for r in results
     ]
+
+@app.get("/student/{student_id}/results")
+def get_student_results(student_id: int, db: Session = Depends(get_db)):
+    # Get all results for this student
+    results = db.query(models.QuizResult).filter(models.QuizResult.student_id == student_id).all()
+    # Return list of quiz_ids they have taken
+    return [r.quiz_id for r in results]
     # --- ADMIN ENDPOINTS ---
 @app.get("/users", response_model=List[schemas.User])
 def read_users(db: Session = Depends(get_db)):

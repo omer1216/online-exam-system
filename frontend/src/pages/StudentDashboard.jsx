@@ -1,52 +1,67 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api';
-import TakeQuiz from './TakeQuiz'; 
+import TakeQuiz from './TakeQuiz';
 
 const StudentDashboard = () => {
   const [quizzes, setQuizzes] = useState([]);
+  const [takenQuizzes, setTakenQuizzes] = useState([]); // Store IDs of taken quizzes
   const [selectedQuizId, setSelectedQuizId] = useState(null);
-  
-  // Get Username from storage (We saved the username as the 'token' in the backend)
-  const username = localStorage.getItem('token'); 
+
+  // Get Username and ID from storage
+  const username = localStorage.getItem('token');
+  const userId = localStorage.getItem('user_id');
 
   useEffect(() => {
-    const fetchQuizzes = async () => {
+    const fetchData = async () => {
       try {
-        const response = await api.get('/quizzes');
-        setQuizzes(response.data);
+        const [quizRes, takenRes] = await Promise.all([
+          api.get('/quizzes'),
+          api.get(`/student/${userId}/results`)
+        ]);
+        setQuizzes(quizRes.data);
+        setTakenQuizzes(takenRes.data);
       } catch (error) {
-        console.error("Error fetching quizzes");
+        console.error("Error fetching data", error);
       }
     };
-    fetchQuizzes();
-  }, []);
+    if (userId) fetchData();
+  }, [userId]);
 
   if (selectedQuizId) {
     return <TakeQuiz quizId={selectedQuizId} onBack={() => setSelectedQuizId(null)} />;
   }
 
   return (
-    <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto' }}>
+    <div className="dashboard-layout">
       {/* WELCOME MESSAGE */}
-      <h1>🎓 Welcome, <span style={{color: '#2196f3'}}>{username}</span>!</h1>
+      <h1>🎓 Welcome, <span style={{ color: 'var(--primary-color)' }}>{username}</span>!</h1>
       <p>Here are your available exams:</p>
-      
+
       <h3>Available Quizzes</h3>
       {quizzes.length === 0 ? <p>No quizzes available yet.</p> : (
-        <ul>
-          {quizzes.map((quiz) => (
-            <li key={quiz.id} 
-                style={{ background: '#e3f2fd', margin: '10px 0', padding: '15px', borderRadius: '8px', borderLeft: '5px solid #2196f3' }}>
-              <strong>{quiz.title}</strong>
-              <p style={{ margin: '5px 0' }}>{quiz.description}</p>
-              <button 
-                onClick={() => setSelectedQuizId(quiz.id)}
-                style={{ padding: '8px 15px', background: '#2196f3', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
-                Start Quiz
-              </button>
-            </li>
-          ))}
-        </ul>
+        <div className="dashboard-grid">
+          {quizzes.map((quiz) => {
+            const isTaken = takenQuizzes.includes(quiz.id);
+            return (
+              <div key={quiz.id} className="stat-card" style={{ borderLeft: '5px solid var(--primary-color)' }}>
+                <strong>{quiz.title}</strong>
+                <p style={{ margin: '5px 0', color: 'var(--text-secondary)' }}>{quiz.description}</p>
+
+                {isTaken ? (
+                  <button disabled style={{ backgroundColor: '#9ca3af', cursor: 'not-allowed', marginTop: '1rem' }}>
+                    ✅ Completed
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => setSelectedQuizId(quiz.id)}
+                    className="mt-4">
+                    Start Quiz
+                  </button>
+                )}
+              </div>
+            );
+          })}
+        </div>
       )}
     </div>
   );
