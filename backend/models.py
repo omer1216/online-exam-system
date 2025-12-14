@@ -13,7 +13,7 @@ class Quiz(Base):
     __tablename__ = "quizzes"
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String)
-    description = Column(String)  # <--- ADD THIS LINE HERE
+    description = Column(String)  
     teacher_id = Column(Integer, ForeignKey("users.id"))
     
     questions = relationship("Question", back_populates="quiz")
@@ -31,7 +31,6 @@ class Question(Base):
 
     quiz = relationship("Quiz", back_populates="questions")
 
-    # Add this at the bottom of models.py
 class QuizResult(Base):
     __tablename__ = "results"
     id = Column(Integer, primary_key=True, index=True)

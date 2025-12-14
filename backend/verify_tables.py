@@ -1,5 +1,4 @@
 from sqlalchemy import create_engine, inspect
-# Use the config from database.py
 DATABASE_URL = "postgresql://postgres:admin@localhost/exam_db"
 
 def list_tables():

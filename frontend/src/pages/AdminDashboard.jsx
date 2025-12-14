@@ -61,7 +61,7 @@ const AdminDashboard = () => {
                   </span>
                 </td>
                 <td>
-                  {user.role !== 'admin' && ( // Don't let admin delete themselves
+                  {user.role !== 'admin' && ( 
                     <button
                       onClick={() => handleDelete(user.id)}
                       style={{ background: 'var(--error-color)', width: 'auto', padding: '5px 10px', fontSize: '0.9rem' }}>

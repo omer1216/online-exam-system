@@ -53,7 +53,6 @@ function App() {
             </div>
           )
         ) : (
-          // --- UPDATED DASHBOARD LOGIC ---
           role === 'admin' ? (
             <AdminDashboard />
           ) : role === 'teacher' ? (

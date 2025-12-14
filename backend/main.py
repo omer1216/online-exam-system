@@ -7,7 +7,6 @@ from typing import List
 import models, schemas, crud
 from database import SessionLocal, engine
 
-# Create the database tables automatically
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()

@@ -32,8 +32,7 @@ const TakeQuiz = ({ quizId, onBack }) => {
 
   if (!quiz) return <p>Loading Quiz...</p>;
 
-  // --- VIEW: SHOW RESULT (UPDATED WITH ROUNDING) ---
-  // --- VIEW: SHOW RESULT (UPDATED WITH ROUNDING) ---
+
   if (result) {
     return (
       <div className="auth-container">
@@ -50,7 +49,6 @@ const TakeQuiz = ({ quizId, onBack }) => {
     );
   }
 
-  // --- VIEW: SHOW QUESTIONS (Same as before) ---
   return (
     <div className="dashboard-layout">
       <button onClick={onBack} className="secondary mb-4">Cancel</button>

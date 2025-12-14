@@ -55,8 +55,7 @@ const TeacherDashboard = () => {
     setViewingResults(false); // Show Questions Mode
   };
 
-  // --- VIEW 1: SHOW RESULTS TABLE ---
-  // --- VIEW 1: SHOW RESULTS TABLE ---
+
   if (selectedQuiz && viewingResults) {
     return (
       <div className="dashboard-layout">
